@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     logger.info('Wix contact webhook received', { instanceId, eventType, contactId });
 
-    // Process asynchronously — respond fast
+    // Process asynchronously  - respond fast
     processWixContactEvent(instanceId, contactId, eventType).catch((err) => {
       logger.error('Wix contact sync failed', {
         instanceId,

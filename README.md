@@ -6,10 +6,10 @@ Built as a self-hosted Wix app (Next.js on Vercel) because the integration needs
 
 ## What it does
 
-- **Contact sync** — when a contact is created or updated on either side, the change gets pushed to the other platform in real-time via webhooks. There's a 3-layer loop prevention system to stop infinite ping-pong between the two.
-- **Form capture** — Wix form submissions get matched to HubSpot contact properties using a combination of configured mappings and heuristic name matching. UTM params from the page URL are attached automatically.
-- **Field mapping UI** — embedded in the Wix admin as an iframe. Admins can add/remove/toggle mappings, pick transforms (lowercase, uppercase, etc.), and choose sync direction per field.
-- **OAuth for both platforms** — tokens are encrypted at rest with AES-256-CBC, auto-refreshed before expiry.
+- **Contact sync** - when a contact is created or updated on either side, the change gets pushed to the other platform in real-time via webhooks. There's a 3-layer loop prevention system to stop infinite ping-pong between the two.
+- **Form capture** - Wix form submissions get matched to HubSpot contact properties using a combination of configured mappings and heuristic name matching. UTM params from the page URL are attached automatically.
+- **Field mapping UI** - embedded in the Wix admin as an iframe. Admins can add/remove/toggle mappings, pick transforms (lowercase, uppercase, etc.), and choose sync direction per field.
+- **OAuth for both platforms** - tokens are encrypted at rest with AES-256-CBC, auto-refreshed before expiry.
 
 ## Stack
 
@@ -72,9 +72,9 @@ The tricky part of bidirectional sync is preventing loops. When we sync a Wix co
 
 We handle this with three checks:
 
-1. **Event dedup** — every webhook event ID gets stored in a `processed_events` collection with a 24h TTL. If we've seen it, skip.
-2. **Echo suppression** — when we write to a platform, we drop a time-bucketed marker (5-second windows). If a webhook comes from the other platform within that window for the same contact, it's almost certainly our own echo.
-3. **Data comparison** — before pushing to the target, we compare what we'd write vs what's already there. If nothing actually changed, skip.
+1. **Event dedup** - every webhook event ID gets stored in a `processed_events` collection with a 24h TTL. If we've seen it, skip.
+2. **Echo suppression** - when we write to a platform, we drop a time-bucketed marker (5-second windows). If a webhook comes from the other platform within that window for the same contact, it's almost certainly our own echo.
+3. **Data comparison** - before pushing to the target, we compare what we'd write vs what's already there. If nothing actually changed, skip.
 
 Conflicts are resolved with field-level last-write-wins.
 

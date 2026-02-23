@@ -1,4 +1,4 @@
-# API Plan — Wix-HubSpot Contact Integration
+# API Plan - Wix-HubSpot Contact Integration
 
 ## Overview
 
@@ -131,9 +131,9 @@ All webhook handlers return 200 immediately (to avoid platform retries) and proc
 
 All require `instanceId` as a query param or in the request body.
 
-**GET /api/mappings** — returns all mappings for the installation, sorted with defaults first.
+**GET /api/mappings** - returns all mappings for the installation, sorted with defaults first.
 
-**POST /api/mappings** — creates a new mapping. Required fields: `instanceId`, `wixField`, `hubspotProperty`. Optional: `wixFieldLabel`, `hubspotPropertyLabel`, `transformType`, `transformConfig`, `direction`.
+**POST /api/mappings** - creates a new mapping. Required fields: `instanceId`, `wixField`, `hubspotProperty`. Optional: `wixFieldLabel`, `hubspotPropertyLabel`, `transformType`, `transformConfig`, `direction`.
 
 Example request:
 ```json
@@ -148,19 +148,19 @@ Example request:
 }
 ```
 
-**PUT /api/mappings** — updates an existing mapping. Takes `instanceId`, `mappingId`, and any fields to change (`wixField`, `hubspotProperty`, `transformType`, `transformConfig`, `direction`, `isActive`).
+**PUT /api/mappings** - updates an existing mapping. Takes `instanceId`, `mappingId`, and any fields to change (`wixField`, `hubspotProperty`, `transformType`, `transformConfig`, `direction`, `isActive`).
 
-**DELETE /api/mappings** — deletes a mapping. Query params: `instanceId`, `mappingId`.
+**DELETE /api/mappings** - deletes a mapping. Query params: `instanceId`, `mappingId`.
 
 ### Field listing routes
 
-**GET /api/fields/wix?instanceId=...** — returns the static list of Wix contact fields (13 fields: name, email, phone, company, job title, birthday, addresses, etc.)
+**GET /api/fields/wix?instanceId=...** - returns the static list of Wix contact fields (13 fields: name, email, phone, company, job title, birthday, addresses, etc.)
 
-**GET /api/fields/hubspot?instanceId=...** — fetches available contact properties from HubSpot's API. Filters out hidden and non-form fields. Returns name, label, type for each.
+**GET /api/fields/hubspot?instanceId=...** - fetches available contact properties from HubSpot's API. Filters out hidden and non-form fields. Returns name, label, type for each.
 
 ### Sync routes
 
-**POST /api/sync/trigger** — kicks off a manual full sync. Queries all Wix contacts and runs `syncWixToHubSpot()` for each one. Returns counts of synced/skipped/failed.
+**POST /api/sync/trigger** - kicks off a manual full sync. Queries all Wix contacts and runs `syncWixToHubSpot()` for each one. Returns counts of synced/skipped/failed.
 
 ```json
 {
@@ -175,11 +175,11 @@ Example request:
 }
 ```
 
-**GET /api/sync/status?instanceId=...** — returns recent sync errors and contact mapping counts.
+**GET /api/sync/status?instanceId=...** - returns recent sync errors and contact mapping counts.
 
 ### Installation status
 
-**GET /api/installation/status?instanceId=...** — quick health check. Returns whether Wix and HubSpot are connected, portal ID, mapping counts, synced contacts, error count.
+**GET /api/installation/status?instanceId=...** - quick health check. Returns whether Wix and HubSpot are connected, portal ID, mapping counts, synced contacts, error count.
 
 ---
 
@@ -224,11 +224,11 @@ createdAt, updatedAt
 ```
 
 Transforms:
-- `identity` — pass through as-is
-- `lowercase` — `.toLowerCase()` (useful for emails)
-- `uppercase` — `.toUpperCase()`
-- `date_format` — converts to timestamp (for cross-platform date handling)
-- `enum_map` — maps values using a config object, e.g. `{"mr": "Mr.", "ms": "Ms."}`
+- `identity` - pass through as-is
+- `lowercase` - `.toLowerCase()` (useful for emails)
+- `uppercase` - `.toUpperCase()`
+- `date_format` - converts to timestamp (for cross-platform date handling)
+- `enum_map` - maps values using a config object, e.g. `{"mr": "Mr.", "ms": "Ms."}`
 
 ### contact_mappings
 
@@ -285,11 +285,11 @@ This is the core of the app. The main challenge is preventing infinite loops.
 
 ### How we prevent it (3 layers)
 
-**Layer 1 — Event dedup.** Every webhook has a unique event ID. Before doing anything, we check if we've already processed it. If yes, skip. Events are stored with a 24-hour TTL so the collection stays small.
+**Layer 1 - Event dedup.** Every webhook has a unique event ID. Before doing anything, we check if we've already processed it. If yes, skip. Events are stored with a 24-hour TTL so the collection stays small.
 
-**Layer 2 — Echo suppression.** When we write to a platform, we store a time-bucketed marker (5-second buckets). When a webhook comes in from the opposite platform for the same contact, we check if there's a recent marker. If the write happened in the current or previous time bucket, it's almost certainly our own echo. Skip it.
+**Layer 2 - Echo suppression.** When we write to a platform, we store a time-bucketed marker (5-second buckets). When a webhook comes in from the opposite platform for the same contact, we check if there's a recent marker. If the write happened in the current or previous time bucket, it's almost certainly our own echo. Skip it.
 
-**Layer 3 — Data comparison.** Even if layers 1 and 2 don't catch it, we compare the mapped field values against what's already in the target system. If every field is identical, there's nothing to sync. This catches any edge cases the other layers miss.
+**Layer 3 - Data comparison.** Even if layers 1 and 2 don't catch it, we compare the mapped field values against what's already in the target system. If every field is identical, there's nothing to sync. This catches any edge cases the other layers miss.
 
 ### Conflict resolution
 
@@ -309,9 +309,9 @@ When a visitor fills out a Wix form, the app tries to create or update a HubSpot
 
 Three levels, tried in order:
 
-1. **Explicit mapping** — if the admin has set up a field mapping where the label matches the form field name, use that
-2. **Heuristic matching** — we have a lookup table that maps common field names to HubSpot properties (e.g. "first_name", "First Name", "fname" all map to `firstname`)
-3. **Skip** — if we can't match it, we log it and move on
+1. **Explicit mapping** - if the admin has set up a field mapping where the label matches the form field name, use that
+2. **Heuristic matching** - we have a lookup table that maps common field names to HubSpot properties (e.g. "first_name", "First Name", "fname" all map to `firstname`)
+3. **Skip** - if we can't match it, we log it and move on
 
 ### UTM tracking
 
@@ -325,10 +325,10 @@ The dashboard renders at `/dashboard` and gets embedded in the Wix admin via an 
 
 ### Sections
 
-1. **Connection status** — four cards showing Wix status, HubSpot status (with portal ID), synced contacts count, and error count
-2. **Connect HubSpot** — button that opens a popup window for the OAuth flow. When done, the popup sends a postMessage back and the dashboard refreshes.
-3. **Field mappings** — table showing all configured mappings with toggle switches, direction indicators, transform badges. "Add Mapping" button opens a modal with dropdowns for Wix fields, HubSpot properties, transform type, and direction.
-4. **Sync panel** — shows last sync info and a "Sync Now" button
+1. **Connection status** - four cards showing Wix status, HubSpot status (with portal ID), synced contacts count, and error count
+2. **Connect HubSpot** - button that opens a popup window for the OAuth flow. When done, the popup sends a postMessage back and the dashboard refreshes.
+3. **Field mappings** - table showing all configured mappings with toggle switches, direction indicators, transform badges. "Add Mapping" button opens a modal with dropdowns for Wix fields, HubSpot properties, transform type, and direction.
+4. **Sync panel** - shows last sync info and a "Sync Now" button
 
 ### Security
 
@@ -405,11 +405,11 @@ All are bidirectional and active by default. Users can change or remove them fro
 1. Push to GitHub
 2. Deploy to Vercel, set env vars
 3. In Wix Dev Center:
-   - App URL → `{BASE_URL}/api/auth/wix/install`
-   - Redirect URL → `{BASE_URL}/api/auth/wix/callback`
-   - Dashboard extension → `{BASE_URL}/dashboard`
-   - Subscribe to webhooks: contact created/updated, form submitted
+  - App URL → `{BASE_URL}/api/auth/wix/install`
+  - Redirect URL → `{BASE_URL}/api/auth/wix/callback`
+  - Dashboard extension → `{BASE_URL}/dashboard`
+  - Subscribe to webhooks: contact created/updated, form submitted
 4. In HubSpot Developer Portal:
-   - Redirect URI → `{BASE_URL}/api/auth/hubspot/callback`
-   - Subscribe to: contact.creation, contact.propertyChange
+  - Redirect URI → `{BASE_URL}/api/auth/hubspot/callback`
+  - Subscribe to: contact.creation, contact.propertyChange
 5. Test: install on a Wix site, connect HubSpot, create a contact on each side, verify sync works

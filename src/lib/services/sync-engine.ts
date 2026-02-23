@@ -105,7 +105,7 @@ export async function syncWixToHubSpot(
   // Mark event as processed immediately
   await markEventProcessed(eventId, 'wix', 'contact.sync');
 
-  // Layer 2: Timestamp check — prevent echo loops
+  // Layer 2: Timestamp check  - prevent echo loops
   const mapping = await db.collection('contact_mappings').findOne({
     wixInstanceId: instanceId,
     wixContactId: wixContact.id,
@@ -210,7 +210,7 @@ export async function syncHubSpotToWix(
     return { status: 'skipped', reason: 'duplicate_event' };
   }
 
-  // Echo suppression — check if this was caused by our own Wix → HubSpot sync
+  // Echo suppression  - check if this was caused by our own Wix → HubSpot sync
   const echoBucket = Math.floor(Date.now() / 5000);
   const echoId = `hs-echo-${hubspotContactId}-${echoBucket}`;
   if (await isEventProcessed(echoId)) {

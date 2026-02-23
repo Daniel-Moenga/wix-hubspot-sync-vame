@@ -1,6 +1,6 @@
-# Wix ↔ HubSpot Integration — Deliverables
+# Wix ↔ HubSpot Integration - Deliverables
 
-**Assignment:** Vame Ltd — App Market Full Stack Assignment
+**Assignment:** Vame Ltd - App Market Full Stack Assignment
 **Developer:** Daniel Moenga
 **Date:** February 2026
 
@@ -12,7 +12,7 @@
 
 Covers which APIs are connected for each feature and how they interact:
 
-### Feature #1 — Bi-directional Contact Sync
+### Feature #1 - Bi-directional Contact Sync
 
 | Side | API Used | Endpoints |
 |------|----------|-----------|
@@ -22,11 +22,11 @@ Covers which APIs are connected for each feature and how they interact:
 | **HubSpot → App** | Webhooks (HMAC-signed) | `contact.creation`, `contact.propertyChange` |
 
 The sync engine uses a three-layer loop prevention system:
-1. **Event dedup** — Each webhook event ID is checked against a TTL collection (24h expiry)
-2. **Echo suppression** — If we pushed data to platform B within the last 5 seconds, we suppress the incoming echo webhook from B
-3. **Data change detection** — Compare incoming field values vs. current target values; skip if identical
+1. **Event dedup** - Each webhook event ID is checked against a TTL collection (24h expiry)
+2. **Echo suppression** - If we pushed data to platform B within the last 5 seconds, we suppress the incoming echo webhook from B
+3. **Data change detection** - Compare incoming field values vs. current target values; skip if identical
 
-### Feature #2 — Form & Lead Capture with UTM Attribution
+### Feature #2 - Form & Lead Capture with UTM Attribution
 
 | Side | API Used | Purpose |
 |------|----------|---------|
@@ -36,7 +36,7 @@ The sync engine uses a three-layer loop prevention system:
 
 UTM parameters are extracted from the page URL where the form was submitted. Form field names are matched to HubSpot properties using heuristic matching (e.g., "Your Email" → `email`, "Full Name" → `firstname` + `lastname`).
 
-### Feature #3 — OAuth 2.0 Security
+### Feature #3 - OAuth 2.0 Security
 
 | Platform | Flow | Token Expiry |
 |----------|------|-------------|
@@ -45,7 +45,7 @@ UTM parameters are extracted from the page URL where the form was submitted. For
 
 Tokens are encrypted at rest using AES-256-CBC before storage in MongoDB. HMAC-SHA256 signed state parameters prevent CSRF during OAuth flows.
 
-### Feature #4 — Field Mapping Dashboard
+### Feature #4 - Field Mapping Dashboard
 
 | API | Purpose |
 |-----|---------|
@@ -83,7 +83,7 @@ The dashboard is embedded as an iframe inside the Wix site admin panel.
 - **Framework:** Next.js 16 (App Router, TypeScript)
 - **Database:** MongoDB Atlas (5 collections with TTL indexes)
 - **Hosting:** Vercel (serverless functions, edge network)
-- **Testing:** Vitest — 80 unit tests passing
+- **Testing:** Vitest - 80 unit tests passing
 - **Styling:** Tailwind CSS v4
 
 ---
@@ -182,4 +182,4 @@ The assignment referenced Klaviyo for Wix as inspiration for UX around connectin
 | Token security | Standard | AES-256-CBC encryption at rest |
 | Dashboard | Embedded | Embedded in Wix admin as iframe |
 
-This implementation goes beyond a Klaviyo-style integration by supporting full bi-directional sync with sophisticated loop prevention — which is the hardest engineering problem in sync systems.
+This implementation goes beyond a Klaviyo-style integration by supporting full bi-directional sync with sophisticated loop prevention - which is the hardest engineering problem in sync systems.
