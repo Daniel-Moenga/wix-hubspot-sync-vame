@@ -40,7 +40,7 @@ UTM parameters are extracted from the page URL where the form was submitted. For
 
 | Platform | Flow | Token Expiry |
 |----------|------|-------------|
-| **Wix** | Advanced OAuth (Authorization Code) | 5 minutes (auto-refresh) |
+| **Wix** | OAuth (Client Credentials, with Authorization Code fallback) | 4 hours |
 | **HubSpot** | Authorization Code Grant | 30 minutes (auto-refresh) |
 
 Tokens are encrypted at rest using AES-256-CBC before storage in MongoDB. HMAC-SHA256 signed state parameters prevent CSRF during OAuth flows.

@@ -70,14 +70,16 @@ The app sits in the middle. Wix and HubSpot both send webhooks when contacts cha
 When a Wix site owner installs the app:
 
 1. Wix hits `GET /api/auth/wix/install` with an install token
-2. We redirect to Wix's authorization URL
+2. We redirect to the Wix installer URL (`wix.com/installer/install`)
 3. User grants permissions
-4. Wix redirects to `GET /api/auth/wix/callback` with an auth code
-5. We exchange the code for tokens, encrypt them, store in MongoDB
-6. We create 6 default field mappings (name, email, phone, company, job title)
-7. Redirect the user back to their Wix dashboard
+4. Wix redirects to `GET /api/auth/wix/callback` with `?code=&instanceId=&state=`
+5. We try two token flows in order:
+   - **Flow A (modern):** `POST wixapis.com/oauth2/token` with `client_credentials` grant using `instanceId`
+   - **Flow B (fallback):** `POST wixapis.com/oauth/access` with `authorization_code` grant using `code`
+6. Encrypt tokens, store in MongoDB, create 6 default field mappings
+7. Redirect to close the Wix installer window
 
-Wix access tokens expire every 5 minutes, so we refresh them automatically with a 30-second buffer. The refresh token lasts longer but we always store the latest one.
+Client credentials tokens last 4 hours. When they expire, we just call the token endpoint again with the same `instanceId` (no refresh tokens needed). The fallback authorization_code flow returns tokens that expire in 5 minutes with a refresh token for renewals.
 
 **Permissions needed:** Contacts.Read, Contacts.Write, Forms.Read
 
@@ -109,7 +111,7 @@ All tokens go through AES-256-CBC before hitting the database. Format is `iv:cip
 | Method | Path | What it does |
 |--------|------|-------------|
 | GET | `/api/auth/wix/install` | Entry point for Wix app installation. Takes `?token=` and redirects to Wix. |
-| GET | `/api/auth/wix/callback` | Wix sends the user back here with `?code=&instanceId=&state=`. Exchanges code, stores tokens, sets up default mappings. Redirects to Wix dashboard. |
+| GET | `/api/auth/wix/callback` | Wix sends the user back here with `?code=&instanceId=&state=`. Tries client_credentials (instanceId) first, falls back to authorization_code (code). Stores tokens, sets up default mappings. Redirects to close the installer. |
 | GET | `/api/auth/hubspot/connect` | Takes `?instanceId=`, signs an OAuth state, redirects to HubSpot. |
 | GET | `/api/auth/hubspot/callback` | HubSpot sends the user back here with `?code=&state=`. Verifies state, exchanges code, stores tokens, creates UTM properties. Returns HTML that closes the popup. |
 
