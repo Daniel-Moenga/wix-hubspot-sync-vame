@@ -78,8 +78,20 @@ export default function Home() {
             style={{ fontFamily: "Figtree, sans-serif" }}
           >
             Keep{" "}
-            <span style={{ color: "#116dff" }}>Wix</span> and{" "}
-            <span style={{ color: "#ff5c35" }}>HubSpot</span>
+            <span className="inline-flex items-center gap-1.5">
+              {/* Wix wordmark SVG */}
+              <svg viewBox="0 0 24 24" className="h-[0.55em] translate-y-[0.04em]" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+                <path d="m0 7.354 2.113 9.292h.801a1.54 1.54 0 0 0 1.506-1.218l1.351-6.34a.171.171 0 0 1 .167-.137c.08 0 .15.058.167.137l1.352 6.34a1.54 1.54 0 0 0 1.506 1.218h.805l2.113-9.292h-.565c-.62 0-1.159.43-1.296 1.035l-1.26 5.545-1.106-5.176a1.76 1.76 0 0 0-2.19-1.324c-.639.176-1.113.716-1.251 1.365l-1.094 5.127-1.26-5.537A1.33 1.33 0 0 0 .563 7.354H0zm13.992 0a.951.951 0 0 0-.951.95v8.342h.635a.952.952 0 0 0 .951-.95V7.353h-.635zm1.778 0 3.158 4.66-3.14 4.632h1.325c.368 0 .712-.181.918-.486l1.756-2.59a.12.12 0 0 1 .197 0l1.754 2.59c.206.305.55.486.918.486h1.326l-3.14-4.632L24 7.354h-1.326c-.368 0-.712.181-.918.486l-1.772 2.617a.12.12 0 0 1-.197 0L18.014 7.84a1.108 1.108 0 0 0-.918-.486H15.77z" />
+              </svg>
+            </span>
+            {" "}and{" "}
+            <span className="inline-flex items-center gap-1">
+              {/* HubSpot sprocket */}
+              <svg viewBox="0 0 24 24" className="h-[0.55em] translate-y-[0.04em]" fill="#ff7a59" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z" />
+              </svg>
+              <span style={{ color: "#33475b" }}>HubSpot</span>
+            </span>
             <br />
             contacts in sync.
           </h1>
@@ -142,11 +154,11 @@ export default function Home() {
           <div className="grid grid-cols-[1fr_auto_1fr] gap-3 md:gap-6 items-center">
             {/* Wix */}
             <div className="rounded-lg border border-[#e4e9f1] p-5 text-center">
-              <div
-                className="text-[22px] font-extrabold mb-1"
-                style={{ fontFamily: "Figtree, sans-serif", color: "#116dff" }}
-              >
-                Wix
+              <div className="flex justify-center mb-2">
+                {/* Official Wix wordmark */}
+                <svg viewBox="0 0 24 24" className="h-7" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+                  <path d="m0 7.354 2.113 9.292h.801a1.54 1.54 0 0 0 1.506-1.218l1.351-6.34a.171.171 0 0 1 .167-.137c.08 0 .15.058.167.137l1.352 6.34a1.54 1.54 0 0 0 1.506 1.218h.805l2.113-9.292h-.565c-.62 0-1.159.43-1.296 1.035l-1.26 5.545-1.106-5.176a1.76 1.76 0 0 0-2.19-1.324c-.639.176-1.113.716-1.251 1.365l-1.094 5.127-1.26-5.537A1.33 1.33 0 0 0 .563 7.354H0zm13.992 0a.951.951 0 0 0-.951.95v8.342h.635a.952.952 0 0 0 .951-.95V7.353h-.635zm1.778 0 3.158 4.66-3.14 4.632h1.325c.368 0 .712-.181.918-.486l1.756-2.59a.12.12 0 0 1 .197 0l1.754 2.59c.206.305.55.486.918.486h1.326l-3.14-4.632L24 7.354h-1.326c-.368 0-.712.181-.918.486l-1.772 2.617a.12.12 0 0 1-.197 0L18.014 7.84a1.108 1.108 0 0 0-.918-.486H15.77z" />
+                </svg>
               </div>
               <div className="text-[12px] text-[#9aa3b2]">
                 CRM Contacts &amp; Forms
@@ -194,11 +206,17 @@ export default function Home() {
 
             {/* HubSpot */}
             <div className="rounded-lg border border-[#e4e9f1] p-5 text-center">
-              <div
-                className="text-[22px] font-extrabold mb-1"
-                style={{ fontFamily: "Figtree, sans-serif", color: "#ff5c35" }}
-              >
-                HubSpot
+              <div className="flex items-center justify-center gap-2 mb-2">
+                {/* Official HubSpot sprocket */}
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="#ff7a59" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z" />
+                </svg>
+                <span
+                  className="text-[20px] font-extrabold"
+                  style={{ fontFamily: "Figtree, sans-serif", color: "#33475b" }}
+                >
+                  HubSpot
+                </span>
               </div>
               <div className="text-[12px] text-[#9aa3b2]">
                 CRM Contacts &amp; Properties
@@ -676,13 +694,13 @@ export default function Home() {
 
           <div className="rounded-xl border border-[#e4e9f1] bg-white overflow-hidden">
             <div className="grid grid-cols-[1fr_40px_1fr] items-center px-5 py-2.5 bg-[#f9fafb] border-b border-[#e4e9f1]">
-              <span className="text-[11px] font-semibold text-[#116dff] uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-[#000000] uppercase tracking-wider">
                 Wix Field
               </span>
               <span className="text-center text-[11px] text-[#c8d2e0]">
                 &#8596;
               </span>
-              <span className="text-[11px] font-semibold text-[#ff5c35] uppercase tracking-wider text-right">
+              <span className="text-[11px] font-semibold text-[#33475b] uppercase tracking-wider text-right">
                 HubSpot
               </span>
             </div>

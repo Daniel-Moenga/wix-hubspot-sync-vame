@@ -7,6 +7,7 @@ interface AddMappingModalProps {
   instanceId: string;
   wixFields: FieldOption[];
   hubspotProperties: FieldOption[];
+  existingMappings: Array<{ hubspotProperty: string; wixFieldLabel: string }>;
   onSave: (mapping: any) => void;
   onClose: () => void;
 }
@@ -15,6 +16,7 @@ export function AddMappingModal({
   instanceId,
   wixFields,
   hubspotProperties,
+  existingMappings,
   onSave,
   onClose,
 }: AddMappingModalProps) {
@@ -24,6 +26,12 @@ export function AddMappingModal({
   const [direction, setDirection] = useState('both');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Filter out HubSpot properties that are already mapped
+  const mappedHubspotKeys = new Set(existingMappings.map((m) => m.hubspotProperty));
+  const availableHubspotProperties = hubspotProperties.filter(
+    (p) => !mappedHubspotKeys.has(p.key),
+  );
 
   const selectedWixField = wixFields.find((f) => f.key === wixField);
   const selectedHubspotProp = hubspotProperties.find((p) => p.key === hubspotProperty);
@@ -53,13 +61,15 @@ export function AddMappingModal({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create mapping');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to create mapping');
       }
 
       const data = await response.json();
       onSave(data.mapping);
     } catch (err) {
-      setError(String(err));
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
     } finally {
       setSaving(false);
     }
@@ -106,7 +116,7 @@ export function AddMappingModal({
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Select a HubSpot property...</option>
-              {hubspotProperties.map((p) => (
+              {availableHubspotProperties.map((p) => (
                 <option key={p.key} value={p.key}>
                   {p.label} ({p.key})
                 </option>

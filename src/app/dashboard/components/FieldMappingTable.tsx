@@ -150,6 +150,7 @@ export function FieldMappingTable({ instanceId }: { instanceId: string }) {
           instanceId={instanceId}
           wixFields={wixFields}
           hubspotProperties={hubspotProperties}
+          existingMappings={mappings}
           onSave={handleAddMapping}
           onClose={() => setShowAddModal(false)}
         />

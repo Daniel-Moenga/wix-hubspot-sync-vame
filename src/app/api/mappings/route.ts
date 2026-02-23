@@ -34,6 +34,20 @@ export async function POST(req: NextRequest) {
     }
 
     const db = await getDb();
+
+    // Prevent duplicate HubSpot property mappings for the same installation
+    const duplicate = await db.collection('field_mappings').findOne({
+      wixInstanceId: instanceId,
+      hubspotProperty,
+    });
+
+    if (duplicate) {
+      return NextResponse.json(
+        { error: `HubSpot property "${hubspotProperty}" is already mapped to Wix field "${duplicate.wixFieldLabel}". Remove the existing mapping first.` },
+        { status: 409 },
+      );
+    }
+
     const now = new Date();
 
     const mapping = {
