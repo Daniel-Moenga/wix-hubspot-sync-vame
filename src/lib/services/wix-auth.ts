@@ -12,8 +12,8 @@ export async function getWixTokenByInstance(
   correlationId?: string,
 ): Promise<WixTokenResponse> {
   const url = `${WIX_OAUTH_BASE}/token`;
-  const appId = process.env.WIX_APP_ID;
-  const appSecret = process.env.WIX_APP_SECRET;
+  const appId = process.env.WIX_APP_ID?.trim();
+  const appSecret = process.env.WIX_APP_SECRET?.trim();
   const params = new URLSearchParams({
     grant_type: 'client_credentials',
     client_id: appId || '',
@@ -61,9 +61,10 @@ export async function getWixTokenByCode(
   correlationId?: string,
 ): Promise<WixTokenResponse> {
   const url = 'https://www.wixapis.com/oauth/access';
-  const appId = process.env.WIX_APP_ID;
-  const appSecret = process.env.WIX_APP_SECRET;
-  const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/wix/callback`;
+  const appId = process.env.WIX_APP_ID?.trim();
+  const appSecret = process.env.WIX_APP_SECRET?.trim();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, '');
+  const redirectUri = `${baseUrl}/api/auth/wix/callback`;
   const params = new URLSearchParams({
     grant_type: 'authorization_code',
     client_id: appId || '',

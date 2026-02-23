@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
   const correlationId = randomUUID();
   try {
     const token = req.nextUrl.searchParams.get('token');
-    const appId = process.env.WIX_APP_ID;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const appId = process.env.WIX_APP_ID?.trim();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, '');
 
     if (!appId || !baseUrl) {
       logger.error('Missing required Wix install env vars', {

@@ -133,7 +133,8 @@ export async function GET(req: NextRequest) {
 }
 
 function redirectWithError(detail: string, correlationId: string): NextResponse {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://wix-hubspot-integration-vame.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, '')
+    || 'https://wix-hubspot-integration-vame.vercel.app';
   const errorUrl = new URL(baseUrl);
   errorUrl.searchParams.set('error', 'install_failed');
   errorUrl.searchParams.set('detail', detail.substring(0, 500));

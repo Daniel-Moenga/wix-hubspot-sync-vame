@@ -7,11 +7,15 @@ import { HUBSPOT_TOKEN_URL, UTM_PROPERTIES } from '@/lib/utils/constants';
 import { HubSpotTokenResponse } from '@/types/hubspot';
 
 export async function exchangeHubSpotCode(code: string): Promise<HubSpotTokenResponse> {
+  const clientId = process.env.HUBSPOT_CLIENT_ID?.trim();
+  const clientSecret = process.env.HUBSPOT_CLIENT_SECRET?.trim();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, '');
+
   const params = new URLSearchParams({
     grant_type: 'authorization_code',
-    client_id: process.env.HUBSPOT_CLIENT_ID!,
-    client_secret: process.env.HUBSPOT_CLIENT_SECRET!,
-    redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/hubspot/callback`,
+    client_id: clientId || '',
+    client_secret: clientSecret || '',
+    redirect_uri: `${baseUrl}/api/auth/hubspot/callback`,
     code,
   });
 
@@ -31,10 +35,13 @@ export async function exchangeHubSpotCode(code: string): Promise<HubSpotTokenRes
 }
 
 async function refreshHubSpotToken(refreshToken: string): Promise<HubSpotTokenResponse> {
+  const clientId = process.env.HUBSPOT_CLIENT_ID?.trim();
+  const clientSecret = process.env.HUBSPOT_CLIENT_SECRET?.trim();
+
   const params = new URLSearchParams({
     grant_type: 'refresh_token',
-    client_id: process.env.HUBSPOT_CLIENT_ID!,
-    client_secret: process.env.HUBSPOT_CLIENT_SECRET!,
+    client_id: clientId || '',
+    client_secret: clientSecret || '',
     refresh_token: refreshToken,
   });
 
