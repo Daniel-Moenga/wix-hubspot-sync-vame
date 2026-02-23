@@ -122,11 +122,22 @@ export async function GET(req: NextRequest) {
   }
 
   // Step 4: Redirect to close the installer window
-  const redirectUrl = state
-    ? decodeURIComponent(state)
-    : `https://www.wix.com/installer/close-window?access_token=${tokens.access_token}`;
+  let redirectUrl: string;
+  if (state) {
+    redirectUrl = decodeURIComponent(state);
+  } else {
+    // Use close-window without access_token — the installation is already stored
+    // in MongoDB above. Passing the modern OAuthNG token to the legacy close-window
+    // endpoint causes a Wix-side 500 error.
+    redirectUrl = 'https://www.wix.com/installer/close-window';
+  }
 
-  logger.info('Wix OAuth callback complete, redirecting', { correlationId, instanceId: storageId, hasState: !!state });
+  logger.info('Wix OAuth callback complete, redirecting', {
+    correlationId,
+    instanceId: storageId,
+    hasState: !!state,
+    redirectTarget: redirectUrl.substring(0, 120),
+  });
   const response = NextResponse.redirect(redirectUrl);
   response.headers.set('Cross-Origin-Opener-Policy', 'unsafe-none');
   return response;
