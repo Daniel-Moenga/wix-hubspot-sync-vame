@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -13,9 +8,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wix ↔ HubSpot Sync | Bi-directional Contact Integration",
+  title: "Wix ↔ HubSpot Sync | Contact Integration for Wix",
   description:
-    "Real-time bi-directional contact sync between Wix and HubSpot CRM. Form capture with UTM attribution, configurable field mapping, and OAuth 2.0 security.",
+    "Sync contacts between Wix and HubSpot CRM in real-time. Form capture with UTM attribution, configurable field mapping, and secure OAuth authentication.",
   openGraph: {
     title: "Wix ↔ HubSpot Sync",
     description:
@@ -30,10 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={`${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>
