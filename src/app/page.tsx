@@ -1,3 +1,5 @@
+import { InstallErrorBanner } from './components/InstallErrorBanner';
+
 export default function Home() {
   const WIX_INSTALL_URL =
     "https://www.wix.com/installer/install?appId=6ebb052f-b4f3-468e-b7e4-c143d267f589&redirectUrl=https://wix-hubspot-integration-vame.vercel.app/api/auth/wix/callback";
@@ -8,28 +10,20 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* ── Navigation ── */}
       <nav className="flex items-center justify-between max-w-5xl mx-auto px-6 py-5">
-        <div className="flex items-center gap-2">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <rect width="20" height="20" rx="5" fill="#116dff" />
-            <path
-              d="M6 10h8m-3.5-3.5L14 10l-3.5 3.5"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+        <a href="/" className="flex items-center gap-2">
+          {/* Wix wordmark */}
+          <svg viewBox="0 0 24 24" className="h-[15px]" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+            <path d="m0 7.354 2.113 9.292h.801a1.54 1.54 0 0 0 1.506-1.218l1.351-6.34a.171.171 0 0 1 .167-.137c.08 0 .15.058.167.137l1.352 6.34a1.54 1.54 0 0 0 1.506 1.218h.805l2.113-9.292h-.565c-.62 0-1.159.43-1.296 1.035l-1.26 5.545-1.106-5.176a1.76 1.76 0 0 0-2.19-1.324c-.639.176-1.113.716-1.251 1.365l-1.094 5.127-1.26-5.537A1.33 1.33 0 0 0 .563 7.354H0zm13.992 0a.951.951 0 0 0-.951.95v8.342h.635a.952.952 0 0 0 .951-.95V7.353h-.635zm1.778 0 3.158 4.66-3.14 4.632h1.325c.368 0 .712-.181.918-.486l1.756-2.59a.12.12 0 0 1 .197 0l1.754 2.59c.206.305.55.486.918.486h1.326l-3.14-4.632L24 7.354h-1.326c-.368 0-.712.181-.918.486l-1.772 2.617a.12.12 0 0 1-.197 0L18.014 7.84a1.108 1.108 0 0 0-.918-.486H15.77z" />
           </svg>
-          <span
-            style={{
-              fontFamily: "Figtree, sans-serif",
-              fontWeight: 700,
-              fontSize: "15px",
-              color: "#1a1d26",
-            }}
-          >
-            WixHub Sync
-          </span>
-        </div>
+          {/* Sync arrows */}
+          <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+            <path d="M1 3h14M11.5 0L15 3l-3.5 3M15 7H1M4.5 4L1 7l3.5 3" stroke="#c8d2e0" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {/* HubSpot sprocket */}
+          <svg viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="#ff7a59" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z" />
+          </svg>
+        </a>
         <div className="flex items-center gap-4">
           <a
             href="#features"
@@ -62,6 +56,8 @@ export default function Home() {
           </a>
         </div>
       </nav>
+
+      <InstallErrorBanner />
 
       {/* ── Hero ── */}
       <section className="max-w-5xl mx-auto px-6 pt-14 pb-20 md:pt-20 md:pb-28">
@@ -910,17 +906,16 @@ export default function Home() {
       {/* ── Footer ── */}
       <footer className="border-t border-[#e4e9f1] py-8">
         <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-              <rect width="20" height="20" rx="5" fill="#116dff" />
-              <path
-                d="M6 10h8m-3.5-3.5L14 10l-3.5 3.5"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className="flex items-center gap-3">
+            <a href="/" className="flex items-center gap-1.5">
+              <svg viewBox="0 0 24 24" className="h-3" fill="#000000" xmlns="http://www.w3.org/2000/svg">
+                <path d="m0 7.354 2.113 9.292h.801a1.54 1.54 0 0 0 1.506-1.218l1.351-6.34a.171.171 0 0 1 .167-.137c.08 0 .15.058.167.137l1.352 6.34a1.54 1.54 0 0 0 1.506 1.218h.805l2.113-9.292h-.565c-.62 0-1.159.43-1.296 1.035l-1.26 5.545-1.106-5.176a1.76 1.76 0 0 0-2.19-1.324c-.639.176-1.113.716-1.251 1.365l-1.094 5.127-1.26-5.537A1.33 1.33 0 0 0 .563 7.354H0zm13.992 0a.951.951 0 0 0-.951.95v8.342h.635a.952.952 0 0 0 .951-.95V7.353h-.635zm1.778 0 3.158 4.66-3.14 4.632h1.325c.368 0 .712-.181.918-.486l1.756-2.59a.12.12 0 0 1 .197 0l1.754 2.59c.206.305.55.486.918.486h1.326l-3.14-4.632L24 7.354h-1.326c-.368 0-.712.181-.918.486l-1.772 2.617a.12.12 0 0 1-.197 0L18.014 7.84a1.108 1.108 0 0 0-.918-.486H15.77z" />
+              </svg>
+              <span className="text-[11px] text-[#c8d2e0]">&#8596;</span>
+              <svg viewBox="0 0 24 24" className="h-3 w-3" fill="#ff7a59" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z" />
+              </svg>
+            </a>
             <span className="text-[13px] text-[#6e7787]">
               Built by{" "}
               <span className="text-[#1a1d26] font-medium">

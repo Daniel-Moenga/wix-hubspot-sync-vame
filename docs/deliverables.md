@@ -147,8 +147,8 @@ To test: Click "Connect HubSpot" in the Wix dashboard → authorize with a HubSp
 
 | Platform | Access |
 |----------|--------|
-| **Wix Developer Account** | danielmoenga17@gmail.com |
-| **HubSpot Developer Account** | danielmoenga17@gmail.com |
+| **Wix Developer Account** | (provided separately) |
+| **HubSpot Developer Account** | (provided separately) |
 | **Vercel Deployment** | https://wix-hubspot-integration-vame.vercel.app |
 | **GitHub** | https://github.com/Daniel-Moenga |
 

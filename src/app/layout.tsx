@@ -8,11 +8,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wix ↔ HubSpot Sync | Contact Integration for Wix",
+  title: "WixHub Sync | Contact Integration for Wix",
   description:
     "Sync contacts between Wix and HubSpot CRM in real-time. Form capture with UTM attribution, configurable field mapping, and secure OAuth authentication.",
   openGraph: {
-    title: "Wix ↔ HubSpot Sync",
+    title: "WixHub Sync",
     description:
       "Sync contacts between Wix and HubSpot in real-time. No Zapier required.",
     type: "website",
