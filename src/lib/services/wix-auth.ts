@@ -13,7 +13,6 @@ export async function exchangeWixCode(code: string): Promise<WixTokenResponse> {
       client_id: process.env.WIX_APP_ID,
       client_secret: process.env.WIX_APP_SECRET,
       code,
-      redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/wix/callback`,
     }),
   });
 
