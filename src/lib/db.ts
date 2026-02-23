@@ -1,4 +1,5 @@
 import { MongoClient, Db } from 'mongodb';
+import { logger } from '@/lib/utils/logger';
 
 function getMongoUri(): string {
   const raw = process.env.MONGODB_URI;
@@ -17,6 +18,29 @@ function getMongoUri(): string {
   }
 
   return sanitized;
+}
+
+function getMongoUriDiagnostics(uri: string): Record<string, unknown> {
+  const safe: Record<string, unknown> = {
+    length: uri.length,
+    hasLiteralBackslashN: uri.includes('\\n'),
+    hasLiteralBackslashR: uri.includes('\\r'),
+    hasWhitespace: /\s/.test(uri),
+    startsWithQuote: uri.startsWith('"') || uri.startsWith("'"),
+    endsWithQuote: uri.endsWith('"') || uri.endsWith("'"),
+  };
+
+  try {
+    const parsed = new URL(uri);
+    safe.protocol = parsed.protocol;
+    safe.host = parsed.host;
+    safe.pathname = parsed.pathname;
+    safe.hasAuth = !!parsed.username;
+  } catch {
+    safe.urlParse = 'failed';
+  }
+
+  return safe;
 }
 
 interface MongoClientCache {
@@ -40,10 +64,20 @@ async function getClient(): Promise<MongoClient> {
   }
 
   if (!cached.promise) {
-    cached.promise = MongoClient.connect(getMongoUri()).then((client) => {
-      cached.client = client;
-      return client;
-    });
+    const uri = getMongoUri();
+    cached.promise = MongoClient.connect(uri)
+      .then((client) => {
+        cached.client = client;
+        return client;
+      })
+      .catch((error) => {
+        logger.error('MongoClient.connect failed', {
+          error: String(error),
+          diagnostics: getMongoUriDiagnostics(uri),
+        });
+        cached.promise = null;
+        throw error;
+      });
   }
 
   return cached.promise;
