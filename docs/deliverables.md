@@ -204,6 +204,12 @@ User confirms requested scopes and clicks **Agree & Add**.
 
 After install, the dashboard is available with Wix connected and HubSpot connection CTA visible.
 
+### 5) Connect HubSpot from the dashboard
+
+![Connected dashboard state](./screenshots/hubspot_wix_connected.png)
+
+After clicking **Connect HubSpot** and completing OAuth, both systems show connected and the field mapping table is ready for sync tuning.
+
 ---
 
 ## Comparison to Klaviyo for Wix (Inspiration)

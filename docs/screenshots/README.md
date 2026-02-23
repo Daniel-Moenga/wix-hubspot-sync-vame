@@ -6,3 +6,4 @@ These images are referenced directly in `docs/deliverables.md`:
 - `02-wix-site-selection.png`
 - `03-wix-permissions.png`
 - `04-installed-dashboard.png`
+- `hubspot_wix_connected.png`
