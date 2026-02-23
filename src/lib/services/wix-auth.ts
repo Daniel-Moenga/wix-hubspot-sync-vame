@@ -7,13 +7,23 @@ import { WixTokenResponse } from '@/types/wix';
 /**
  * Modern OAuth: client_credentials grant at /oauth2/token
  */
-export async function getWixTokenByInstance(instanceId: string): Promise<WixTokenResponse> {
+export async function getWixTokenByInstance(
+  instanceId: string,
+  correlationId?: string,
+): Promise<WixTokenResponse> {
   const url = `${WIX_OAUTH_BASE}/token`;
   const appId = process.env.WIX_APP_ID;
   const appSecret = process.env.WIX_APP_SECRET;
+  const params = new URLSearchParams({
+    grant_type: 'client_credentials',
+    client_id: appId || '',
+    client_secret: appSecret || '',
+    instance_id: instanceId,
+  });
 
   logger.info('Attempting client_credentials token request', {
     url,
+    correlationId,
     hasAppId: !!appId,
     appIdLength: appId?.length ?? 0,
     hasAppSecret: !!appSecret,
@@ -24,18 +34,14 @@ export async function getWixTokenByInstance(instanceId: string): Promise<WixToke
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      grant_type: 'client_credentials',
-      client_id: appId,
-      client_secret: appSecret,
-      instance_id: instanceId,
-    }),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params.toString(),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
     logger.error('client_credentials token request failed', {
+      correlationId,
       status: response.status,
       error: errorText,
       url,
@@ -50,13 +56,25 @@ export async function getWixTokenByInstance(instanceId: string): Promise<WixToke
 /**
  * Legacy flow: authorization_code grant at /oauth/access (wixapis.com domain)
  */
-export async function getWixTokenByCode(code: string): Promise<WixTokenResponse> {
+export async function getWixTokenByCode(
+  code: string,
+  correlationId?: string,
+): Promise<WixTokenResponse> {
   const url = 'https://www.wixapis.com/oauth/access';
   const appId = process.env.WIX_APP_ID;
   const appSecret = process.env.WIX_APP_SECRET;
+  const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/wix/callback`;
+  const params = new URLSearchParams({
+    grant_type: 'authorization_code',
+    client_id: appId || '',
+    client_secret: appSecret || '',
+    redirect_uri: redirectUri,
+    code,
+  });
 
   logger.info('Attempting authorization_code token request', {
     url,
+    correlationId,
     hasCode: !!code,
     codeLength: code?.length ?? 0,
     codePrefix: code?.substring(0, 8) ?? 'EMPTY',
@@ -64,18 +82,14 @@ export async function getWixTokenByCode(code: string): Promise<WixTokenResponse>
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      grant_type: 'authorization_code',
-      client_id: appId,
-      client_secret: appSecret,
-      code,
-    }),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params.toString(),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
     logger.error('authorization_code token request failed', {
+      correlationId,
       status: response.status,
       error: errorText,
       url,

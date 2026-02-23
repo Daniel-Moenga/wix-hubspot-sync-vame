@@ -33,6 +33,15 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: '/api/auth/wix/callback',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'unsafe-none',
+          },
+        ],
+      },
     ];
   },
 };

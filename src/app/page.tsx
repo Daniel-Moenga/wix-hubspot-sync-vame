@@ -1,8 +1,7 @@
 import { InstallErrorBanner } from './components/InstallErrorBanner';
 
 export default function Home() {
-  const WIX_INSTALL_URL =
-    "https://www.wix.com/installer/install?appId=6ebb052f-b4f3-468e-b7e4-c143d267f589&redirectUrl=https://wix-hubspot-integration-vame.vercel.app/api/auth/wix/callback";
+  const WIX_INSTALL_URL = "/api/auth/wix/install";
   const GITHUB_URL =
     "https://github.com/Daniel-Moenga/wix-hubspot-sync-vame";
 

@@ -37,6 +37,7 @@ npm run dev
 | `WIX_APP_ID` | From Wix Dev Center |
 | `WIX_APP_SECRET` | From Wix Dev Center |
 | `WIX_WEBHOOK_PUBLIC_KEY` | For verifying Wix webhook signatures |
+| `WIX_AUTH_MODE` | `hybrid` (default), `oauth_only`, or `legacy_only` |
 | `HUBSPOT_CLIENT_ID` | From HubSpot developer portal |
 | `HUBSPOT_CLIENT_SECRET` | From HubSpot developer portal |
 | `HUBSPOT_APP_ID` | From HubSpot developer portal |

@@ -1,26 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 import { WIX_INSTALLER_URL } from '@/lib/utils/constants';
 import { logger } from '@/lib/utils/logger';
 
 export async function GET(req: NextRequest) {
+  const correlationId = randomUUID();
   try {
     const token = req.nextUrl.searchParams.get('token');
+    const appId = process.env.WIX_APP_ID;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-    if (!token) {
-      return NextResponse.json({ error: 'Missing token parameter' }, { status: 400 });
+    if (!appId || !baseUrl) {
+      logger.error('Missing required Wix install env vars', {
+        correlationId,
+        hasAppId: !!appId,
+        hasBaseUrl: !!baseUrl,
+      });
+      return NextResponse.json({ error: 'Missing Wix install configuration' }, { status: 500 });
     }
 
-    const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/wix/callback`;
+    const redirectUrl = `${baseUrl}/api/auth/wix/callback`;
+
     const installUrl = new URL(WIX_INSTALLER_URL);
-    installUrl.searchParams.set('token', token);
-    installUrl.searchParams.set('appId', process.env.WIX_APP_ID!);
+    if (token) {
+      installUrl.searchParams.set('token', token);
+    }
+    installUrl.searchParams.set('appId', appId);
     installUrl.searchParams.set('redirectUrl', redirectUrl);
 
-    logger.info('Redirecting to Wix installer', { appId: process.env.WIX_APP_ID });
+    logger.info('Redirecting to Wix installer', {
+      correlationId,
+      appId,
+      hasToken: !!token,
+    });
 
     return NextResponse.redirect(installUrl.toString());
   } catch (error) {
-    logger.error('Wix install error', { error: String(error) });
+    logger.error('Wix install error', { correlationId, error: String(error) });
     return NextResponse.json({ error: 'Installation failed' }, { status: 500 });
   }
 }

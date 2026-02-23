@@ -71,6 +71,10 @@ export interface WixTokenResponse {
   access_token: string;
   refresh_token?: string;
   expires_in: number;
+  token_type?: string;
+  scope?: string;
+  instanceId?: string;
+  instance_id?: string;
 }
 
 export interface WixContactField {
