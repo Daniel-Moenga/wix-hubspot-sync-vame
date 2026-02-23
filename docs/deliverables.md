@@ -83,8 +83,19 @@ The dashboard is embedded as an iframe inside the Wix site admin panel.
 - **Framework:** Next.js 16 (App Router, TypeScript)
 - **Database:** MongoDB Atlas (5 collections with TTL indexes)
 - **Hosting:** Vercel (serverless functions, edge network)
-- **Testing:** Vitest - 80 unit tests passing
+- **Testing:** Vitest - 88 unit tests passing
 - **Styling:** Tailwind CSS v4
+
+### Post-install UX
+
+The install flow now includes a dedicated success handoff for manual installs:
+
+- `GET /install/success` confirms installation and gives clear next actions.
+- Success page actions:
+  - Open app dashboard (`/dashboard?instanceId=...`)
+  - Open Wix Admin (`https://manage.wix.com/dashboard/sites`)
+  - Return home with success banner (`/?installed=1&instanceId=...`)
+- Home page banner (`installed=1`) gives a visible "you're good to continue" state for returning users.
 
 ---
 
@@ -96,7 +107,8 @@ The dashboard is embedded as an iframe inside the Wix site admin panel.
 wix-hubspot-integration/
 ├── docs/
 │   ├── api-plan.md              # Full API plan document
-│   └── deliverables.md          # This file
+│   ├── deliverables.md          # This file
+│   └── screenshots/             # Install walkthrough images
 ├── src/
 │   ├── app/
 │   │   ├── api/auth/            # 4 OAuth routes
@@ -113,7 +125,7 @@ wix-hubspot-integration/
 │   │   ├── services/            # Core business logic (8 files)
 │   │   └── utils/               # Crypto, logger, errors, constants
 │   └── types/                   # TypeScript type definitions (4 files)
-├── tests/unit/                  # 80 unit tests (4 test files)
+├── tests/unit/                  # 88 unit tests (6 test files)
 ├── .env.example                 # All 10 required env vars documented
 ├── vercel.json                  # Function timeout config
 ├── vitest.config.ts
@@ -163,6 +175,34 @@ To test: Click "Connect HubSpot" in the Wix dashboard → authorize with a HubSp
 5. **Test Loop Prevention:** Update a synced contact → Confirm no infinite sync loop (check processed_events collection)
 6. **Test Form Capture:** Submit a Wix form on a page with `?utm_source=test&utm_campaign=demo` in the URL → Verify HubSpot contact has UTM properties populated
 7. **Test Field Mapping:** In the dashboard, add/edit/delete a field mapping → Verify it persists and affects future syncs
+
+---
+
+## Install & Access Walkthrough
+
+### 1) Landing page install entry
+
+![Landing page install entry](./screenshots/01-landing-install.png)
+
+User starts installation from the public landing page via **Install on Wix**.
+
+### 2) Select Wix site
+
+![Wix site selection](./screenshots/02-wix-site-selection.png)
+
+Wix prompts the user to choose which site should receive the app.
+
+### 3) Review permissions and approve
+
+![Wix permissions approval](./screenshots/03-wix-permissions.png)
+
+User confirms requested scopes and clicks **Agree & Add**.
+
+### 4) Open installed app dashboard
+
+![Installed app dashboard](./screenshots/04-installed-dashboard.png)
+
+After install, the dashboard is available with Wix connected and HubSpot connection CTA visible.
 
 ---
 

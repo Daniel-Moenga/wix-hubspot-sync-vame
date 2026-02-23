@@ -79,6 +79,22 @@ We handle this with three checks:
 
 Conflicts are resolved with field-level last-write-wins.
 
+## After Installation
+
+If installation starts from the landing page, the user is redirected to a success page:
+
+- `GET /install/success`
+
+That page provides direct actions to:
+
+- Open the app dashboard (`/dashboard?instanceId=...` when available)
+- Open Wix admin (`https://manage.wix.com/dashboard/sites`)
+- Return to home with a success banner (`/?installed=1&instanceId=...`)
+
+For Wix-native app install flow, callback behavior remains Wix-compatible (installer closes as expected).
+
+For step-by-step screenshots, see [docs/deliverables.md](docs/deliverables.md#install--access-walkthrough).
+
 ## Running tests
 
 ```bash
@@ -86,7 +102,7 @@ npm test          # single run
 npm run test:watch # watch mode
 ```
 
-80 tests across 4 suites covering the field mapper, webhook verification, form capture, and crypto utils.
+88 tests across the unit suites cover field mapping, webhook verification, form capture, crypto, and Wix OAuth install routing.
 
 ## Deploying
 
@@ -97,15 +113,15 @@ vercel deploy --prod
 Then configure both platforms:
 
 **Wix Dev Center:**
-- App URL → `{BASE_URL}/api/auth/wix/install`
-- Redirect URL → `{BASE_URL}/api/auth/wix/callback`
-- Dashboard component → `{BASE_URL}/dashboard`
-- Webhook subscriptions → contact created/updated, form submitted
-- Permissions → Contacts (Read/Write), Forms (Read)
+- App URL -> `{BASE_URL}/api/auth/wix/install`
+- Redirect URL -> `{BASE_URL}/api/auth/wix/callback`
+- Dashboard component -> `{BASE_URL}/dashboard`
+- Webhook subscriptions -> contact created/updated, form submitted
+- Permissions -> Contacts (Read/Write), Forms (Read)
 
 **HubSpot Developer Portal:**
-- Redirect URI → `{BASE_URL}/api/auth/hubspot/callback`
-- Webhook subscriptions → contact.creation, contact.propertyChange
+- Redirect URI -> `{BASE_URL}/api/auth/hubspot/callback`
+- Webhook subscriptions -> contact.creation, contact.propertyChange
 
 ## API routes
 
@@ -124,5 +140,6 @@ Then configure both platforms:
 | POST | `/api/sync/trigger` | Run a manual full sync |
 | GET | `/api/sync/status` | Check recent sync activity |
 | GET | `/api/installation/status` | Check connection health |
+| GET | `/install/success` | Post-install success page for manual landing installs |
 
 See [docs/api-plan.md](docs/api-plan.md) for the full spec with request/response schemas.

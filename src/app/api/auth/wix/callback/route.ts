@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const rawInstanceId = req.nextUrl.searchParams.get('instanceId');
   const instanceJwt = req.nextUrl.searchParams.get('instance');
   const state = req.nextUrl.searchParams.get('state');
+  const entry = req.nextUrl.searchParams.get('entry');
   const authMode = getWixAuthMode();
   const instanceId = rawInstanceId || extractInstanceIdFromJwt(instanceJwt);
 
@@ -121,9 +122,15 @@ export async function GET(req: NextRequest) {
     logger.error('Failed to create default mappings', { correlationId, instanceId: storageId, error: String(error) });
   }
 
-  // Step 4: Redirect to close the installer window
+  // Step 4: Redirect user
   let redirectUrl: string;
-  if (state) {
+  if (entry === 'landing') {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim().replace(/\/$/, '')
+      || 'https://wix-hubspot-integration-vame.vercel.app';
+    const successUrl = new URL(`${baseUrl}/install/success`);
+    successUrl.searchParams.set('instanceId', storageId);
+    redirectUrl = successUrl.toString();
+  } else if (state) {
     redirectUrl = decodeURIComponent(state);
   } else {
     // Use close-window without access_token — the installation is already stored
@@ -136,6 +143,7 @@ export async function GET(req: NextRequest) {
     correlationId,
     instanceId: storageId,
     hasState: !!state,
+    entry,
     redirectTarget: redirectUrl.substring(0, 120),
   });
   const response = NextResponse.redirect(redirectUrl);

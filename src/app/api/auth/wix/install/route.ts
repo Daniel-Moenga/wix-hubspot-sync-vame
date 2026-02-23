@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Missing Wix install configuration' }, { status: 500 });
     }
 
-    const redirectUrl = `${baseUrl}/api/auth/wix/callback`;
+    const redirectUrl = token
+      ? `${baseUrl}/api/auth/wix/callback`
+      : `${baseUrl}/api/auth/wix/callback?entry=landing`;
 
     const installUrl = new URL(WIX_INSTALLER_URL);
     if (token) {

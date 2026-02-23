@@ -54,6 +54,7 @@ describe('wix install route', () => {
     expect(location).toContain('https://www.wix.com/installer/install');
     expect(location).toContain('token=test-token');
     expect(location).toContain('appId=app-123');
+    expect(location).not.toContain('entry%3Dlanding');
     expect(location).toContain(
       `redirectUrl=${encodeURIComponent('https://example.vercel.app/api/auth/wix/callback')}`,
     );
@@ -72,6 +73,9 @@ describe('wix install route', () => {
     expect(location).toContain('https://www.wix.com/installer/install');
     expect(location).not.toContain('token=');
     expect(location).toContain('appId=app-123');
+    expect(location).toContain(
+      `redirectUrl=${encodeURIComponent('https://example.vercel.app/api/auth/wix/callback?entry=landing')}`,
+    );
   });
 });
 
@@ -163,6 +167,31 @@ describe('wix callback route', () => {
     expect(location).toContain('error=install_failed');
     expect(decodedLocation).toContain('Storage failed');
     expect(location).toContain('cid=');
+    expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+  });
+
+  it('redirects to install success page for landing entry flow', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'https://example.vercel.app');
+    vi.stubEnv('WIX_AUTH_MODE', 'oauth_only');
+
+    const getWixTokenByInstance = vi
+      .fn()
+      .mockResolvedValue({ access_token: 'wix-access', expires_in: 300 });
+    const storeWixInstallation = vi.fn().mockResolvedValue(undefined);
+    const { GET } = await importWixCallbackRoute({
+      getWixTokenByInstance,
+      storeWixInstallation,
+    });
+
+    const req = new NextRequest(
+      'https://example.vercel.app/api/auth/wix/callback?entry=landing&instanceId=landing-instance',
+    );
+
+    const res = await GET(req);
+    const location = res.headers.get('location') || '';
+
+    expect(location).toContain('https://example.vercel.app/install/success');
+    expect(location).toContain('instanceId=landing-instance');
     expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
   });
 });

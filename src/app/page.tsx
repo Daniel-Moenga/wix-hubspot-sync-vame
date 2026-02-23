@@ -1,4 +1,5 @@
 import { InstallErrorBanner } from './components/InstallErrorBanner';
+import { InstallSuccessBanner } from './components/InstallSuccessBanner';
 
 export default function Home() {
   const WIX_INSTALL_URL = "/api/auth/wix/install";
@@ -57,6 +58,7 @@ export default function Home() {
       </nav>
 
       <InstallErrorBanner />
+      <InstallSuccessBanner />
 
       {/* ── Hero ── */}
       <section className="max-w-5xl mx-auto px-6 pt-14 pb-20 md:pt-20 md:pb-28">
