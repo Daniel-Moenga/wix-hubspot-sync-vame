@@ -4,43 +4,22 @@ import { logger } from '@/lib/utils/logger';
 import { WIX_OAUTH_BASE } from '@/lib/utils/constants';
 import { WixTokenResponse } from '@/types/wix';
 
-export async function exchangeWixCode(code: string): Promise<WixTokenResponse> {
-  const response = await fetch(`${WIX_OAUTH_BASE}/access`, {
+export async function getWixTokenByInstance(instanceId: string): Promise<WixTokenResponse> {
+  const response = await fetch(`${WIX_OAUTH_BASE}/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      grant_type: 'authorization_code',
+      grant_type: 'client_credentials',
       client_id: process.env.WIX_APP_ID,
       client_secret: process.env.WIX_APP_SECRET,
-      code,
+      instance_id: instanceId,
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    logger.error('Wix code exchange failed', { status: response.status, error: errorText });
-    throw new Error(`Wix code exchange failed: ${response.status} - ${errorText.substring(0, 200)}`);
-  }
-
-  return response.json();
-}
-
-export async function refreshWixToken(refreshToken: string): Promise<WixTokenResponse> {
-  const response = await fetch(`${WIX_OAUTH_BASE}/access`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      grant_type: 'refresh_token',
-      client_id: process.env.WIX_APP_ID,
-      client_secret: process.env.WIX_APP_SECRET,
-      refresh_token: refreshToken,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    logger.error('Wix token refresh failed', { status: response.status, error: errorText });
-    throw new Error(`Wix token refresh failed: ${response.status}`);
+    logger.error('Wix token request failed', { status: response.status, error: errorText });
+    throw new Error(`Wix token request failed: ${response.status} - ${errorText.substring(0, 200)}`);
   }
 
   return response.json();
@@ -59,17 +38,16 @@ export async function getWixAccessToken(instanceId: string): Promise<string> {
     return decrypt(installation.wixAccessToken);
   }
 
-  // Refresh the token
+  // Get a fresh token via client_credentials
   logger.info('Refreshing Wix access token', { instanceId });
-  const decryptedRefresh = decrypt(installation.wixRefreshToken);
-  const tokens = await refreshWixToken(decryptedRefresh);
+  const tokens = await getWixTokenByInstance(instanceId);
 
   await db.collection('installations').updateOne(
     { wixInstanceId: instanceId },
     {
       $set: {
         wixAccessToken: encrypt(tokens.access_token),
-        wixRefreshToken: encrypt(tokens.refresh_token),
+        wixRefreshToken: tokens.refresh_token ? encrypt(tokens.refresh_token) : null,
         wixTokenExpiresAt: new Date(Date.now() + (tokens.expires_in || 300) * 1000),
         updatedAt: new Date(),
       },
@@ -90,7 +68,7 @@ export async function storeWixInstallation(
     {
       $set: {
         wixAccessToken: encrypt(tokens.access_token),
-        wixRefreshToken: encrypt(tokens.refresh_token),
+        wixRefreshToken: tokens.refresh_token ? encrypt(tokens.refresh_token) : null,
         wixTokenExpiresAt: new Date(Date.now() + (tokens.expires_in || 300) * 1000),
         updatedAt: new Date(),
         isActive: true,

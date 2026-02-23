@@ -1,6 +1,6 @@
 import { FieldMappingRecord } from '@/types/mappings';
 
-export const WIX_OAUTH_BASE = 'https://www.wix.com/oauth';
+export const WIX_OAUTH_BASE = 'https://www.wixapis.com/oauth2';
 export const WIX_INSTALLER_URL = 'https://www.wix.com/installer/install';
 export const WIX_API_BASE = 'https://www.wixapis.com';
 

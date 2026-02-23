@@ -1,29 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { exchangeWixCode, storeWixInstallation } from '@/lib/services/wix-auth';
+import { getWixTokenByInstance, storeWixInstallation } from '@/lib/services/wix-auth';
 import { logger } from '@/lib/utils/logger';
 import { DEFAULT_FIELD_MAPPINGS } from '@/lib/utils/constants';
 import { getDb } from '@/lib/db';
 
 export async function GET(req: NextRequest) {
-  const code = req.nextUrl.searchParams.get('code');
   const instanceId = req.nextUrl.searchParams.get('instanceId');
   const state = req.nextUrl.searchParams.get('state');
 
-  if (!code || !instanceId) {
-    logger.error('Wix callback missing params', { hasCode: !!code, hasInstanceId: !!instanceId });
-    return redirectWithError('Missing code or instanceId parameter');
+  if (!instanceId) {
+    logger.error('Wix callback missing instanceId');
+    return redirectWithError('Missing instanceId parameter');
   }
 
   logger.info('Wix OAuth callback received', { instanceId });
 
-  // Step 1: Exchange the authorization code for tokens
+  // Step 1: Get an access token using client_credentials grant
   let tokens;
   try {
-    tokens = await exchangeWixCode(code);
-    logger.info('Wix code exchange succeeded', { instanceId });
+    tokens = await getWixTokenByInstance(instanceId);
+    logger.info('Wix token request succeeded', { instanceId });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    logger.error('Wix code exchange failed', { instanceId, error: message });
+    logger.error('Wix token request failed', { instanceId, error: message });
     return redirectWithError(`Token exchange failed - ${message}`);
   }
 
