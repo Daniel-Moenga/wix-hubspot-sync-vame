@@ -83,7 +83,7 @@ The dashboard is embedded as an iframe inside the Wix site admin panel.
 - **Framework:** Next.js 16 (App Router, TypeScript)
 - **Database:** MongoDB Atlas (5 collections with TTL indexes)
 - **Hosting:** Vercel (serverless functions, edge network)
-- **Testing:** Vitest - 88 unit tests passing
+- **Testing:** Vitest - 89 unit tests passing
 - **Styling:** Tailwind CSS v4
 
 ### Post-install UX
@@ -91,6 +91,7 @@ The dashboard is embedded as an iframe inside the Wix site admin panel.
 The install flow now includes a dedicated success handoff for manual installs:
 
 - `GET /install/success` confirms installation and gives clear next actions.
+- Landing/manual install detection uses a short-lived `wix_install_entry=landing` server cookie marker so Wix receives the exact registered callback URL.
 - Success page actions:
   - Open app dashboard (`/dashboard?instanceId=...`)
   - Open Wix Admin (`https://manage.wix.com/dashboard/sites`)
@@ -125,7 +126,7 @@ wix-hubspot-integration/
 │   │   ├── services/            # Core business logic (8 files)
 │   │   └── utils/               # Crypto, logger, errors, constants
 │   └── types/                   # TypeScript type definitions (4 files)
-├── tests/unit/                  # 88 unit tests (6 test files)
+├── tests/unit/                  # 89 unit tests (6 test files)
 ├── .env.example                 # All 10 required env vars documented
 ├── vercel.json                  # Function timeout config
 ├── vitest.config.ts

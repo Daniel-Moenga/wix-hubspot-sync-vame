@@ -54,10 +54,14 @@ describe('wix install route', () => {
     expect(location).toContain('https://www.wix.com/installer/install');
     expect(location).toContain('token=test-token');
     expect(location).toContain('appId=app-123');
-    expect(location).not.toContain('entry%3Dlanding');
     expect(location).toContain(
       `redirectUrl=${encodeURIComponent('https://example.vercel.app/api/auth/wix/callback')}`,
     );
+    expect(location).not.toContain('entry%3Dlanding');
+
+    const setCookie = res.headers.get('set-cookie') || '';
+    expect(setCookie).toContain('wix_install_entry=');
+    expect(setCookie).toContain('Max-Age=0');
   });
 
   it('redirects to wix installer without token in manual entry path', async () => {
@@ -74,8 +78,13 @@ describe('wix install route', () => {
     expect(location).not.toContain('token=');
     expect(location).toContain('appId=app-123');
     expect(location).toContain(
-      `redirectUrl=${encodeURIComponent('https://example.vercel.app/api/auth/wix/callback?entry=landing')}`,
+      `redirectUrl=${encodeURIComponent('https://example.vercel.app/api/auth/wix/callback')}`,
     );
+    expect(location).not.toContain('entry%3Dlanding');
+
+    const setCookie = res.headers.get('set-cookie') || '';
+    expect(setCookie).toContain('wix_install_entry=landing');
+    expect(setCookie).toContain('Max-Age=600');
   });
 });
 
@@ -111,6 +120,7 @@ describe('wix callback route', () => {
     );
     expect(location).toContain('wix.com/installer/close-window');
     expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+    expect(res.headers.get('set-cookie') || '').toContain('wix_install_entry=');
   });
 
   it('uses legacy_only flow B when code is present', async () => {
@@ -141,6 +151,7 @@ describe('wix callback route', () => {
       expect.objectContaining({ access_token: 'legacy-access' }),
     );
     expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+    expect(res.headers.get('set-cookie') || '').toContain('wix_install_entry=');
   });
 
   it('fails if token succeeds but no resolvable instance id is available for storage', async () => {
@@ -168,9 +179,10 @@ describe('wix callback route', () => {
     expect(decodedLocation).toContain('Storage failed');
     expect(location).toContain('cid=');
     expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+    expect(res.headers.get('set-cookie') || '').toContain('wix_install_entry=');
   });
 
-  it('redirects to install success page for landing entry flow', async () => {
+  it('redirects to install success page for landing entry flow from query', async () => {
     vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'https://example.vercel.app');
     vi.stubEnv('WIX_AUTH_MODE', 'oauth_only');
 
@@ -193,5 +205,35 @@ describe('wix callback route', () => {
     expect(location).toContain('https://example.vercel.app/install/success');
     expect(location).toContain('instanceId=landing-instance');
     expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+    expect(res.headers.get('set-cookie') || '').toContain('wix_install_entry=');
+  });
+
+  it('redirects to install success page for landing entry flow from cookie marker', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'https://example.vercel.app');
+    vi.stubEnv('WIX_AUTH_MODE', 'oauth_only');
+
+    const getWixTokenByInstance = vi
+      .fn()
+      .mockResolvedValue({ access_token: 'wix-access', expires_in: 300 });
+    const storeWixInstallation = vi.fn().mockResolvedValue(undefined);
+    const { GET } = await importWixCallbackRoute({
+      getWixTokenByInstance,
+      storeWixInstallation,
+    });
+
+    const req = new NextRequest(
+      'https://example.vercel.app/api/auth/wix/callback?instanceId=cookie-instance',
+      {
+        headers: { cookie: 'wix_install_entry=landing' },
+      },
+    );
+
+    const res = await GET(req);
+    const location = res.headers.get('location') || '';
+
+    expect(location).toContain('https://example.vercel.app/install/success');
+    expect(location).toContain('instanceId=cookie-instance');
+    expect(res.headers.get('cross-origin-opener-policy')).toBe('unsafe-none');
+    expect(res.headers.get('set-cookie') || '').toContain('wix_install_entry=');
   });
 });

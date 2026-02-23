@@ -85,6 +85,10 @@ If installation starts from the landing page, the user is redirected to a succes
 
 - `GET /install/success`
 
+Landing installs are tracked with a short-lived server cookie marker (`wix_install_entry=landing`) so the Wix installer redirect URL remains exactly:
+
+- `GET /api/auth/wix/callback`
+
 That page provides direct actions to:
 
 - Open the app dashboard (`/dashboard?instanceId=...` when available)
@@ -102,7 +106,7 @@ npm test          # single run
 npm run test:watch # watch mode
 ```
 
-88 tests across the unit suites cover field mapping, webhook verification, form capture, crypto, and Wix OAuth install routing.
+89 tests across the unit suites cover field mapping, webhook verification, form capture, crypto, and Wix OAuth install routing.
 
 ## Deploying
 

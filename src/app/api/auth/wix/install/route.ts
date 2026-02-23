@@ -3,6 +3,8 @@ import { randomUUID } from 'crypto';
 import { WIX_INSTALLER_URL } from '@/lib/utils/constants';
 import { logger } from '@/lib/utils/logger';
 
+const INSTALL_ENTRY_COOKIE = 'wix_install_entry';
+
 export async function GET(req: NextRequest) {
   const correlationId = randomUUID();
   try {
@@ -19,9 +21,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Missing Wix install configuration' }, { status: 500 });
     }
 
-    const redirectUrl = token
-      ? `${baseUrl}/api/auth/wix/callback`
-      : `${baseUrl}/api/auth/wix/callback?entry=landing`;
+    const redirectUrl = `${baseUrl}/api/auth/wix/callback`;
 
     const installUrl = new URL(WIX_INSTALLER_URL);
     if (token) {
@@ -36,7 +36,24 @@ export async function GET(req: NextRequest) {
       hasToken: !!token,
     });
 
-    return NextResponse.redirect(installUrl.toString());
+    const response = NextResponse.redirect(installUrl.toString());
+    if (token) {
+      // Prevent stale landing markers from influencing Wix-native installs.
+      response.cookies.set(INSTALL_ENTRY_COOKIE, '', {
+        maxAge: 0,
+        path: '/',
+      });
+    } else {
+      response.cookies.set(INSTALL_ENTRY_COOKIE, 'landing', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 10,
+      });
+    }
+
+    return response;
   } catch (error) {
     logger.error('Wix install error', { correlationId, error: String(error) });
     return NextResponse.json({ error: 'Installation failed' }, { status: 500 });

@@ -6,13 +6,17 @@ import { DEFAULT_FIELD_MAPPINGS } from '@/lib/utils/constants';
 import { getDb } from '@/lib/db';
 import { WixTokenResponse } from '@/types/wix';
 
+const INSTALL_ENTRY_COOKIE = 'wix_install_entry';
+
 export async function GET(req: NextRequest) {
   const correlationId = randomUUID();
   const code = req.nextUrl.searchParams.get('code');
   const rawInstanceId = req.nextUrl.searchParams.get('instanceId');
   const instanceJwt = req.nextUrl.searchParams.get('instance');
   const state = req.nextUrl.searchParams.get('state');
-  const entry = req.nextUrl.searchParams.get('entry');
+  const queryEntry = req.nextUrl.searchParams.get('entry');
+  const cookieEntry = req.cookies.get(INSTALL_ENTRY_COOKIE)?.value || null;
+  const entry = queryEntry || cookieEntry;
   const authMode = getWixAuthMode();
   const instanceId = rawInstanceId || extractInstanceIdFromJwt(instanceJwt);
 
@@ -24,6 +28,8 @@ export async function GET(req: NextRequest) {
     hasInstanceJwt: !!instanceJwt,
     resolvedInstanceId: !!instanceId,
     hasState: !!state,
+    hasInstallEntryCookie: !!cookieEntry,
+    resolvedEntry: entry,
     codeLength: code?.length ?? 0,
     instanceIdLength: rawInstanceId?.length ?? 0,
   });
@@ -147,8 +153,7 @@ export async function GET(req: NextRequest) {
     redirectTarget: redirectUrl.substring(0, 120),
   });
   const response = NextResponse.redirect(redirectUrl);
-  response.headers.set('Cross-Origin-Opener-Policy', 'unsafe-none');
-  return response;
+  return finalizeRedirectResponse(response);
 }
 
 function redirectWithError(detail: string, correlationId: string): NextResponse {
@@ -159,7 +164,15 @@ function redirectWithError(detail: string, correlationId: string): NextResponse 
   errorUrl.searchParams.set('detail', detail.substring(0, 500));
   errorUrl.searchParams.set('cid', correlationId);
   const response = NextResponse.redirect(errorUrl.toString());
+  return finalizeRedirectResponse(response);
+}
+
+function finalizeRedirectResponse(response: NextResponse): NextResponse {
   response.headers.set('Cross-Origin-Opener-Policy', 'unsafe-none');
+  response.cookies.set(INSTALL_ENTRY_COOKIE, '', {
+    maxAge: 0,
+    path: '/',
+  });
   return response;
 }
 
