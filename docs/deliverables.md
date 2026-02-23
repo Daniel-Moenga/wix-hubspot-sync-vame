@@ -179,6 +179,14 @@ To test: Click "Connect HubSpot" in the Wix dashboard → authorize with a HubSp
 
 ---
 
+## Automated Validation
+
+- `npm test` ran successfully: **6 test files**, **89 tests**, all passing.
+- `npm run build` ran successfully on **Next.js 16.1.6** with production build output generated.
+- Validation was run after the Wix OAuth redirect hotfix and docs walkthrough updates.
+
+---
+
 ## Install & Access Walkthrough
 
 ### 1) Landing page install entry
@@ -199,13 +207,19 @@ Wix prompts the user to choose which site should receive the app.
 
 User confirms requested scopes and clicks **Agree & Add**.
 
-### 4) Open installed app dashboard
+### 4) Installation complete page
+
+![Installation complete page](./screenshots/wix_app_installed.png)
+
+After the Wix install flow completes, users land on the success page with direct actions to open the app dashboard, Wix admin, or return home.
+
+### 5) Open installed app dashboard
 
 ![Installed app dashboard](./screenshots/04-installed-dashboard.png)
 
-After install, the dashboard is available with Wix connected and HubSpot connection CTA visible.
+The Wix app dashboard opens with connection status, mappings, and manual sync controls available.
 
-### 5) Connect HubSpot from the dashboard
+### 6) Connect HubSpot from the dashboard
 
 ![Connected dashboard state](./screenshots/hubspot_wix_connected.png)
 
