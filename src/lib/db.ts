@@ -1,11 +1,22 @@
 import { MongoClient, Db } from 'mongodb';
 
 function getMongoUri(): string {
-  const uri = process.env.MONGODB_URI;
-  if (!uri) {
+  const raw = process.env.MONGODB_URI;
+  if (!raw) {
     throw new Error('MONGODB_URI environment variable is not defined');
   }
-  return uri;
+
+  // Defend against accidental copy/paste artifacts in hosted env vars.
+  const sanitized = raw
+    .trim()
+    .replace(/[\r\n]/g, '')
+    .replace(/^["']|["']$/g, '');
+
+  if (!sanitized) {
+    throw new Error('MONGODB_URI is empty after sanitization');
+  }
+
+  return sanitized;
 }
 
 interface MongoClientCache {
