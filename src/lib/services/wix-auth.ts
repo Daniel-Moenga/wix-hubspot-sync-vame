@@ -4,24 +4,86 @@ import { logger } from '@/lib/utils/logger';
 import { WIX_OAUTH_BASE } from '@/lib/utils/constants';
 import { WixTokenResponse } from '@/types/wix';
 
+/**
+ * Modern OAuth: client_credentials grant at /oauth2/token
+ */
 export async function getWixTokenByInstance(instanceId: string): Promise<WixTokenResponse> {
-  const response = await fetch(`${WIX_OAUTH_BASE}/token`, {
+  const url = `${WIX_OAUTH_BASE}/token`;
+  const appId = process.env.WIX_APP_ID;
+  const appSecret = process.env.WIX_APP_SECRET;
+
+  logger.info('Attempting client_credentials token request', {
+    url,
+    hasAppId: !!appId,
+    appIdLength: appId?.length ?? 0,
+    hasAppSecret: !!appSecret,
+    appSecretLength: appSecret?.length ?? 0,
+    instanceIdPrefix: instanceId?.substring(0, 8) ?? 'EMPTY',
+    instanceIdLength: instanceId?.length ?? 0,
+  });
+
+  const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       grant_type: 'client_credentials',
-      client_id: process.env.WIX_APP_ID,
-      client_secret: process.env.WIX_APP_SECRET,
+      client_id: appId,
+      client_secret: appSecret,
       instance_id: instanceId,
     }),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    logger.error('Wix token request failed', { status: response.status, error: errorText });
-    throw new Error(`Wix token request failed: ${response.status} - ${errorText.substring(0, 200)}`);
+    logger.error('client_credentials token request failed', {
+      status: response.status,
+      error: errorText,
+      url,
+    });
+    throw new Error(`client_credentials failed: ${response.status} - ${errorText.substring(0, 300)}`);
   }
 
+  logger.info('client_credentials token request succeeded');
+  return response.json();
+}
+
+/**
+ * Legacy flow: authorization_code grant at /oauth/access (wixapis.com domain)
+ */
+export async function getWixTokenByCode(code: string): Promise<WixTokenResponse> {
+  const url = 'https://www.wixapis.com/oauth/access';
+  const appId = process.env.WIX_APP_ID;
+  const appSecret = process.env.WIX_APP_SECRET;
+
+  logger.info('Attempting authorization_code token request', {
+    url,
+    hasCode: !!code,
+    codeLength: code?.length ?? 0,
+    codePrefix: code?.substring(0, 8) ?? 'EMPTY',
+  });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      grant_type: 'authorization_code',
+      client_id: appId,
+      client_secret: appSecret,
+      code,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    logger.error('authorization_code token request failed', {
+      status: response.status,
+      error: errorText,
+      url,
+    });
+    throw new Error(`authorization_code failed: ${response.status} - ${errorText.substring(0, 300)}`);
+  }
+
+  logger.info('authorization_code token request succeeded');
   return response.json();
 }
 
