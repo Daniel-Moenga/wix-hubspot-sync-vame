@@ -11,6 +11,7 @@ function getMongoUri(): string {
   const sanitized = raw
     .trim()
     .replace(/[\r\n]/g, '')
+    .replace(/\\[rn]/g, '')
     .replace(/^["']|["']$/g, '');
 
   if (!sanitized) {
